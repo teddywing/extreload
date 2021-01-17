@@ -1,0 +1,9 @@
+{
+	"name": "com.teddywing.extreload",
+	"description": "extreload",
+	"path": "/tmp/extreload",
+	"type": "stdio",
+	"allowed_origins": [
+		"chrome-extension://pacpdcpgfbpkdpmhfaljffnfbdanmblh/"
+	]
+}
