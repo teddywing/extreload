@@ -1,24 +1,22 @@
-use chrome_native_messaging;
-use serde::Serialize;
-
-use std::io;
-
-#[derive(Serialize)]
-struct ExtensionIdMessage<'a> {
-    ids: &'a[&'a str]
-}
+use headless_chrome;
+use headless_chrome::protocol::Method;
+use serde_json;
+use tungstenite::{connect, Message};
+use url::Url;
 
 fn main() {
-    let ids = vec!["extension_id"];
+    let (mut socket, _response) = connect(
+        Url::parse("ws://127.0.0.1:53954/devtools/browser/0a276302-a6e8-4f7e-9fbf-6ea97b55aa99").unwrap(),
+    ).expect("Can't connect");
 
-    chrome_native_messaging::send_message(
-        io::stdout(),
-        &ExtensionIdMessage { ids: &ids }
-    ).expect("TODO: handle error");
+    let get_targets = headless_chrome::protocol::target::methods::GetTargets {};
 
-    chrome_native_messaging::event_loop(|value| -> Result<(), &str> {
-        match value {
-            _ => Ok(()),
-        }
-    });
+    socket.write_message(
+        Message::Text(serde_json::to_string(&get_targets.to_method_call(1)).unwrap()),
+    ).expect("Failed to write socket message");
+
+    loop {
+        let msg = socket.read_message().expect("Error reading message");
+        println!("Received: {}", msg);
+    }
 }
