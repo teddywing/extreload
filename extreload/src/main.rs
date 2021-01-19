@@ -1,5 +1,5 @@
 use headless_chrome;
-use headless_chrome::protocol::Method;
+use headless_chrome::protocol::{Method, parse_raw_message, parse_response};
 use serde_json;
 use tungstenite::{connect, Message};
 use url::Url;
@@ -18,5 +18,15 @@ fn main() {
     loop {
         let msg = socket.read_message().expect("Error reading message");
         println!("Received: {}", msg);
+
+        match parse_raw_message(&msg.into_text().unwrap()).unwrap() {
+            headless_chrome::protocol::Message::Event(_event) => (),
+            headless_chrome::protocol::Message::Response(response) => {
+                let message: headless_chrome::protocol::target::methods::GetTargetsReturnObject = parse_response(response).unwrap();
+
+                dbg!(message);
+            },
+            headless_chrome::protocol::Message::ConnectionShutdown => (),
+        };
     }
 }
