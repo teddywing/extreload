@@ -1,6 +1,7 @@
-(asdf:defsystem "extreload"
+(asdf:defsystem extreload
   :version "0.0.1"
   :depends-on (:websocket-driver-client)
   :components ((:module "src"
                 :serial t
-                :components ((:file "main")))))
+                :components ((:file "package")
+                             (:file "main")))))
