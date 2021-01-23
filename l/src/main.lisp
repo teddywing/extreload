@@ -9,6 +9,13 @@
           (lambda (message)
             (format t "~&Got: ~A~%" message)))
 
-  (wsd:send *client* "msg")
+  (wsd:send *client* (get-targets-msg 1))
+
+  (sleep 1)
 
   (wsd:close-connection *client*))
+
+(defun get-targets-msg (call-id)
+  (jsown:to-json
+    `(:obj ("id" . ,call-id)
+           ("method" . "Target.getTargets"))))
