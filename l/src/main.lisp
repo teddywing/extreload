@@ -59,7 +59,7 @@
     (filter #'extensionp targets)))
 
 (defun filter (predicate list-form)
-  (let (newl '())
+  (let ((newl '()))
     (dolist (el list-form)
       (if (funcall predicate el)
           (push el newl)))
