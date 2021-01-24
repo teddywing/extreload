@@ -5,9 +5,7 @@
 (defun main ()
   (wsd:start-connection *client*)
 
-  (wsd:on :message *client*
-          (lambda (message)
-            (format t "~&Got: ~A~%" message)))
+  (wsd:on :message *client* #'ws-on-message)
 
   (wsd:send *client* (get-targets-msg 1))
 
@@ -19,3 +17,21 @@
   (jsown:to-json
     `(:obj ("id" . ,call-id)
            ("method" . "Target.getTargets"))))
+
+(defun ws-on-message (message)
+  (let* ((response (jsown:parse message))
+         (targets (parse-get-targets-response response)))
+    (format t "~&Got: ~A~%" targets)))
+
+(defun parse-get-targets-response (response)
+  (let* ((result (json-obj-get response "result"))
+         (targetInfos (json-obj-get result "targetInfos")))
+    targetInfos))
+
+(defun json-obj-get (obj key)
+  (handler-case
+    (jsown:val obj key)
+    (simple-error (e)
+                  (let ((s (format nil "~A" e)))
+                    (if (search "not available" s)
+                        nil)))))
