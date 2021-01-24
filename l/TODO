@@ -1,0 +1,6 @@
+TODO
+
+2021.01.24:
+- WebSockets URL to command line argument
+- Command line arguments for extension IDs
+- How to wait until all messages are sent before closing the WS connection
