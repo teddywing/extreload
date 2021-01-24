@@ -9,7 +9,7 @@
 
   (wsd:send *client* (get-targets-msg 1))
 
-  (sleep 1)
+  (sleep 5)
 
   (wsd:close-connection *client*))
 
@@ -21,7 +21,10 @@
 (defun ws-on-message (message)
   (let* ((response (jsown:parse message))
          (targets (parse-get-targets-response response)))
-    (format t "~&Got: ~A~%" targets)))
+    (if targets
+        (reload-extensions
+          (extension-targets targets)
+          '("pacpdcpgfbpkdpmhfaljffnfbdanmblh")))))
 
 (defun parse-get-targets-response (response)
   (let* ((result (json-obj-get response "result"))
@@ -35,3 +38,30 @@
                   (let ((s (format nil "~A" e)))
                     (if (search "not available" s)
                         nil)))))
+
+(defun reload-extensions (targets extension-ids)
+  (labels ((requested-extension-p (target)
+             (dolist (id extension-ids)
+               (if (uiop:string-prefix-p
+                     (concatenate 'string "chrome-extension://" id)
+                     (json-obj-get target "url"))
+                   (return-from requested-extension-p t)))
+
+             nil))
+
+    (filter #'requested-extension-p targets)))
+
+(defun extension-targets (targets)
+  (labels ((extensionp (target)
+             (equal (json-obj-get target "type")
+                    "background_page")))
+
+    (filter #'extensionp targets)))
+
+(defun filter (predicate list-form)
+  (let (newl '())
+    (dolist (el list-form)
+      (if (funcall predicate el)
+          (push el newl)))
+
+    newl))
