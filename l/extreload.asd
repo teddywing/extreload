@@ -5,4 +5,8 @@
   :components ((:module "src"
                 :serial t
                 :components ((:file "package")
-                             (:file "main")))))
+                             (:file "main"))))
+
+  :build-operation "program-op"
+  :build-pathname "extreload"
+  :entry-point "extreload:main")
