@@ -7,13 +7,13 @@
 
   (wsd:on :message *client* #'ws-on-message)
 
-  (wsd:send *client* (get-targets-msg 1))
+  (wsd:send *client* (target-get-targets-msg 1))
 
   (sleep 5)
 
   (wsd:close-connection *client*))
 
-(defun get-targets-msg (call-id)
+(defun target-get-targets-msg (call-id)
   (jsown:to-json
     `(:obj ("id" . ,call-id)
            ("method" . "Target.getTargets"))))
