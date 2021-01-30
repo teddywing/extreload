@@ -88,8 +88,8 @@
 
 (defun extension-targets (targets)
   (labels ((extensionp (target)
-             (equal (json-obj-get target "type")
-                    "background_page")))
+             (string= (json-obj-get target "type")
+                      "background_page")))
 
     (filter #'extensionp targets)))
 
