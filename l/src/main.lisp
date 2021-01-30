@@ -1,6 +1,6 @@
 (in-package :extreload)
 
-(defvar *client* (wsd:make-client "ws://127.0.0.1:55755/devtools/browser/93f390a0-8ba9-4469-8e2d-69c9feb171bc"))
+(defvar *client* (wsd:make-client "ws://127.0.0.1:55755/devtools/browser/ec1d4b1c-ced0-47ab-a32e-6fdd5b51e1ba"))
 
 (defun main ()
   (wsd:start-connection *client*)
