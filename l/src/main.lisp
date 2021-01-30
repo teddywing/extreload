@@ -66,13 +66,12 @@
 
 (defun reload-extensions (targets extension-ids)
   (labels ((requested-extension-p (target)
-             (dolist (id extension-ids)
-               (if (uiop:string-prefix-p
+             (find-if
+               #'(lambda (id)
+                   (uiop:string-prefix-p
                      (concatenate 'string "chrome-extension://" id)
-                     (json-obj-get target "url"))
-                   (return-from requested-extension-p t)))
-
-             nil))
+                     (json-obj-get target "url")))
+               extension-ids)))
 
     (dolist (extension (filter #'requested-extension-p targets))
       (attach-to-target extension))))
