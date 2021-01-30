@@ -94,9 +94,4 @@
     (filter #'extensionp targets)))
 
 (defun filter (predicate list-form)
-  (let ((newl '()))
-    (dolist (el list-form)
-      (if (funcall predicate el)
-          (push el newl)))
-
-    newl))
+  (remove-if-not predicate list-form))
