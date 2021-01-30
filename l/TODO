@@ -4,3 +4,10 @@ TODO
 - WebSockets URL to command line argument
 - Command line arguments for extension IDs
 - How to wait until all messages are sent before closing the WS connection
+
+2021.01.30:
+- `string=`
+- `unwind-protect` `with-` macro to close the connection
+- wait-group
+- `remove` in `filter`
+- Release build with ECL
