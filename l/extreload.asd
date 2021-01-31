@@ -5,6 +5,7 @@
   :components ((:module "src"
                 :serial t
                 :components ((:file "package")
+                             (:file "macro")
                              (:file "main"))))
 
   :build-operation "program-op"

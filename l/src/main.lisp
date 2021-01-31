@@ -91,6 +91,3 @@
                       "background_page")))
 
     (filter #'extensionp targets)))
-
-(defun filter (predicate list-form)
-  (remove-if-not predicate list-form))
