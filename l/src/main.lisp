@@ -5,15 +5,12 @@
 (defvar *wg* (wait-group:make-wait-group))
 
 (defun main ()
-  (wsd:start-connection *client*)
+  (with-websocket-connection (*client*)
+    (wsd:on :message *client* #'ws-on-message)
 
-  (wsd:on :message *client* #'ws-on-message)
+    (websocket-send *client* (target-get-targets-msg 1))
 
-  (websocket-send *client* (target-get-targets-msg 1))
-
-  (wait-group:wait *wg*)
-
-  (wsd:close-connection *client*))
+    (wait-group:wait *wg*)))
 
 (defun target-get-targets-msg (call-id)
   (jsown:to-json
