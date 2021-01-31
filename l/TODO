@@ -6,10 +6,10 @@ TODO
 - How to wait until all messages are sent before closing the WS connection
 
 2021.01.30:
-- `string=`
+v `string=` (2021.01.30)
 - `unwind-protect` `with-` macro to close the connection
 - wait-group
-- `remove` in `filter`
+v `remove` in `filter` (2021.01.30)
 - Release build with ECL
 
 2021.01.31:
