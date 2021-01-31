@@ -2,14 +2,16 @@
 
 (defvar *client* (wsd:make-client "ws://127.0.0.1:55755/devtools/browser/ec1d4b1c-ced0-47ab-a32e-6fdd5b51e1ba"))
 
+(defvar *wg* (wait-group:make-wait-group))
+
 (defun main ()
   (wsd:start-connection *client*)
 
   (wsd:on :message *client* #'ws-on-message)
 
-  (wsd:send *client* (target-get-targets-msg 1))
+  (websocket-send *client* (target-get-targets-msg 1))
 
-  (sleep 5)
+  (wait-group:wait *wg*)
 
   (wsd:close-connection *client*))
 
@@ -49,7 +51,9 @@
         (reload-extension
           (json-obj-get
             (json-obj-get response "params")
-            "sessionId")))))
+            "sessionId")))
+
+    (wait-group:done *wg*)))
 
 (defun parse-get-targets-response (response)
   (let* ((result (json-obj-get response "result"))
@@ -78,11 +82,11 @@
 
 (defun attach-to-target (extension)
   (let ((target-id (json-obj-get extension "targetId")))
-    (wsd:send *client*
+    (websocket-send *client*
               (target-attach-to-target-msg 2 target-id))))
 
 (defun reload-extension (session-id)
-  (wsd:send *client*
+  (websocket-send *client*
             (runtime-evaluate-msg 1 session-id "chrome.runtime.reload()")))
 
 (defun extension-targets (targets)
@@ -91,3 +95,7 @@
                       "background_page")))
 
     (filter #'extensionp targets)))
+
+(defun websocket-send (client data)
+  (wsd:send *client* data)
+  (wait-group:add *wg*))
