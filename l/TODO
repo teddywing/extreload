@@ -11,3 +11,6 @@ TODO
 - wait-group
 - `remove` in `filter`
 - Release build with ECL
+
+2021.01.31:
+- sysexits
