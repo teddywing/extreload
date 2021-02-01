@@ -4,13 +4,36 @@
 
 (defvar *wg* (wait-group:make-wait-group))
 
+(opts:define-opts
+  (:name :socket-url
+         :description "DevTools protocol WebSocket URL"
+         :long "socket-url"
+         :meta-var "SOCKET_URL")
+  (:name :help
+         :description "print this help menu"
+         :short #\h
+         :long "help")
+  (:name :version
+         :description "show the program version"
+         :short #\V
+         :long "version"))
+
 (defun main ()
-  (with-websocket-connection (*client*)
-    (wsd:on :message *client* #'ws-on-message)
+  (multiple-value-bind (options free-args) (opts:get-opts)
+    ; (when-option (options :help))
+    (when-option (options :version)
+      (format t "~a~%" (asdf:component-version (asdf:find-system :extreload)))
 
-    (websocket-send *client* (target-get-targets-msg 1))
+      (opts:exit 0))
 
-    (wait-group:wait *wg*)))
+    (let* ((socket-url (getf options :socket-url))
+           (client (wsd:make-client socket-url)))
+      (with-websocket-connection (*client*)
+        (wsd:on :message *client* #'ws-on-message)
+
+        (websocket-send *client* (target-get-targets-msg 1))
+
+        (wait-group:wait *wg*)))))
 
 (defun target-get-targets-msg (call-id)
   (jsown:to-json
