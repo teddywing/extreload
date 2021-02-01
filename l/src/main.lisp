@@ -1,6 +1,6 @@
 (in-package :extreload)
 
-(defvar *client* (wsd:make-client "ws://127.0.0.1:55755/devtools/browser/ec1d4b1c-ced0-47ab-a32e-6fdd5b51e1ba"))
+(defvar *client* (wsd:make-client "ws://127.0.0.1:55755/devtools/browser/20c6f8a1-6540-4226-a876-44b72c176ad5"))
 
 (defvar *wg* (wait-group:make-wait-group))
 
