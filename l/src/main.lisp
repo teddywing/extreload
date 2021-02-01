@@ -8,6 +8,7 @@
   (:name :socket-url
          :description "DevTools protocol WebSocket URL"
          :long "socket-url"
+         :arg-parser #'identity
          :meta-var "SOCKET_URL")
   (:name :help
          :description "print this help menu"
@@ -20,7 +21,13 @@
 
 (defun main ()
   (multiple-value-bind (options free-args) (opts:get-opts)
-    ; (when-option (options :help))
+    (when-option (options :help)
+      (opts:describe
+        :usage-of "extreload"
+        :args "EXTENSION_ID...")
+
+      (opts:exit 64))
+
     (when-option (options :version)
       (format t "~a~%" (asdf:component-version (asdf:find-system :extreload)))
 
