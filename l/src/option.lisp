@@ -4,3 +4,8 @@
   `(let ((value (getf ,options ,option)))
      (when value
        ,@body)))
+
+(defun handle-option-error (condition)
+  (format *error-output* "error: ~a~%" condition)
+
+  (opts:exit 64))
