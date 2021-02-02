@@ -8,8 +8,8 @@
                 :serial t
                 :components ((:file "package")
                              (:file "macro")
-                             (:file "option")
                              (:file "config")
+                             (:file "option")
                              (:file "main"))))
 
   :build-operation "program-op"

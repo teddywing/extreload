@@ -20,35 +20,16 @@
          :long "version"))
 
 (defun main ()
-  (multiple-value-bind (options free-args)
-    (handler-bind
-      ((opts:unknown-option #'handle-option-error)
-       (opts:missing-arg #'handle-option-error)
-       (opts:arg-parser-failed #'handle-option-error)
-       (opts:missing-required-option #'handle-option-error))
+  (let ((config (parse-options)))
+    (format t "~a~%" config))
 
-      (opts:get-opts))
+    ;; TODO: error if no `socket-url`
+  (with-websocket-connection (*client*)
+    (wsd:on :message *client* #'ws-on-message)
 
-    (when-option (options :help)
-      (opts:describe
-        :usage-of "extreload"
-        :args "EXTENSION_ID...")
+    (websocket-send *client* (target-get-targets-msg 1))
 
-      (opts:exit 64))
-
-    (when-option (options :version)
-      (format t "~a~%" (asdf:component-version (asdf:find-system :extreload)))
-
-      (opts:exit 0))
-
-    (let* ((socket-url (getf options :socket-url))
-           (client (wsd:make-client socket-url)))
-      (with-websocket-connection (*client*)
-        (wsd:on :message *client* #'ws-on-message)
-
-        (websocket-send *client* (target-get-targets-msg 1))
-
-        (wait-group:wait *wg*)))))
+    (wait-group:wait *wg*)))
 
 (defun target-get-targets-msg (call-id)
   (jsown:to-json
