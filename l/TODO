@@ -18,4 +18,4 @@ v `remove` in `filter` (2021.01.30)
 
 2021.02.02:
 - Option to reload current tab (run `chrome.tabs.reload()` in the last target)
-- Config object
+v Config object (2021.02.02)
