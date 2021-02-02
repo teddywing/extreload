@@ -10,6 +10,7 @@
                              (:file "macro")
                              (:file "config")
                              (:file "option")
+                             (:file "devtools-protocol")
                              (:file "main"))))
 
   :build-operation "program-op"
