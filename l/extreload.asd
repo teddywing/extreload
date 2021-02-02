@@ -9,6 +9,7 @@
                 :components ((:file "package")
                              (:file "macro")
                              (:file "option")
+                             (:file "config")
                              (:file "main"))))
 
   :build-operation "program-op"
