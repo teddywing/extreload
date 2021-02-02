@@ -32,7 +32,10 @@
 
       (opts:exit 0))
 
-    ; (if ) ;; If no socket URL, error 64
+    (when (null (getf options :socket-url))
+        (format *error-output* "error: '--socket-url' is required~%")
+
+        (opts:exit 64))
 
     (make-instance 'config
                    :socket-url (getf options :socket-url)
