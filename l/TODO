@@ -21,4 +21,5 @@ v `remove` in `filter` (2021.01.30)
 v Config object (2021.02.02)
 
 2021.02.03:
-- Correct call ID numbering when multiple extensions are given
+v Correct call ID numbering when multiple extensions are given (2021.02.03)
+- Catch errors from all signals and print the error message instead of opening the debugger
