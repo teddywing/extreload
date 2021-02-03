@@ -10,6 +10,7 @@
                              (:file "macro")
                              (:file "config")
                              (:file "option")
+                             (:file "call-id")
                              (:file "devtools-protocol")
                              (:file "main"))))
 

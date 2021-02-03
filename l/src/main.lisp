@@ -1,6 +1,7 @@
 (in-package :extreload)
 
 (defvar *wg* (wait-group:make-wait-group))
+(defvar *devtools-root-call-id* (make-instance 'call-id))
 
 (opts:define-opts
   (:name :socket-url
@@ -30,7 +31,8 @@
       ; (wsd:on :message *client* #'(lambda (message) (ws-on-message message)))
       ;; TODO: Maybe defvar *config* and store client in the config
 
-      (websocket-send *client* (target-get-targets-msg 1))
+      (websocket-send *client* (target-get-targets-msg
+                                 (next-call-id *devtools-root-call-id*)))
 
       (wait-group:wait *wg*))))
 
@@ -73,9 +75,12 @@
 (defun attach-to-target (extension)
   (let ((target-id (json-obj-get extension "targetId")))
     (websocket-send *client*
-              (target-attach-to-target-msg 2 target-id))))
+              (target-attach-to-target-msg
+                (next-call-id *devtools-root-call-id*)
+                target-id))))
 
 (defun reload-extension (session-id)
+  ;; Use call ID "1" as this is the first message sent to the attached target.
   (websocket-send *client*
             (runtime-evaluate-msg 1 session-id "chrome.runtime.reload()")))
 
