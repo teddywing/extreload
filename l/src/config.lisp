@@ -16,6 +16,7 @@
      :documentation "True if the current tab should be reloaded")
 
    (ws-client
+     :reader ws-client
      :documentation "WebSocket client")))
 
 (defmethod print-object ((object config) stream)

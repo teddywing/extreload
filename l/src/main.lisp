@@ -1,7 +1,5 @@
 (in-package :extreload)
 
-(defvar *client* (wsd:make-client "ws://127.0.0.1:55755/devtools/browser/20c6f8a1-6540-4226-a876-44b72c176ad5"))
-
 (defvar *wg* (wait-group:make-wait-group))
 
 (opts:define-opts
@@ -21,17 +19,18 @@
 
 (defun main ()
   (let ((config (parse-options)))
-    (format t "~a~%" config))
+    ;; Store the WebSocket client as a global.
+    (defvar *client* (ws-client config))
 
     ;; TODO: error if no `socket-url`
-  (with-websocket-connection (*client*)
-    (wsd:on :message *client* #'ws-on-message)
-    ; (wsd:on :message *client* #'(lambda (message) (ws-on-message message)))
-    ;; TODO: Maybe defvar *config* and store client in the config
+    (with-websocket-connection (*client*)
+      (wsd:on :message *client* #'ws-on-message)
+      ; (wsd:on :message *client* #'(lambda (message) (ws-on-message message)))
+      ;; TODO: Maybe defvar *config* and store client in the config
 
-    (websocket-send *client* (target-get-targets-msg 1))
+      (websocket-send *client* (target-get-targets-msg 1))
 
-    (wait-group:wait *wg*)))
+      (wait-group:wait *wg*))))
 
 (defun ws-on-message (message)
   (let* ((response (jsown:parse message))
