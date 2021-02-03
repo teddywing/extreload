@@ -24,7 +24,9 @@
 
     ;; TODO: error if no `socket-url`
     (with-websocket-connection (*client*)
-      (wsd:on :message *client* #'ws-on-message)
+      (wsd:on :message *client*
+              #'(lambda (message)
+                  (ws-on-message message (extension-ids config))))
       ; (wsd:on :message *client* #'(lambda (message) (ws-on-message message)))
       ;; TODO: Maybe defvar *config* and store client in the config
 
@@ -32,13 +34,13 @@
 
       (wait-group:wait *wg*))))
 
-(defun ws-on-message (message)
+(defun ws-on-message (message extension-ids)
   (let* ((response (jsown:parse message))
          (targets (parse-get-targets-response response)))
     (if targets
         (reload-extensions
           (extension-targets targets)
-          '("pacpdcpgfbpkdpmhfaljffnfbdanmblh")))
+          extension-ids))
 
     (if (target-attached-to-target-msg-p response)
         (reload-extension
