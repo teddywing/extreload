@@ -37,6 +37,5 @@
 
         (opts:exit 64))
 
-    (make-instance 'config
-                   :socket-url (getf options :socket-url)
-                   :extension-ids free-args)))
+    (make-config :socket-url (getf options :socket-url)
+                 :extension-ids free-args)))

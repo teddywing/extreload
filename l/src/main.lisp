@@ -26,6 +26,8 @@
     ;; TODO: error if no `socket-url`
   (with-websocket-connection (*client*)
     (wsd:on :message *client* #'ws-on-message)
+    ; (wsd:on :message *client* #'(lambda (message) (ws-on-message message)))
+    ;; TODO: Maybe defvar *config* and store client in the config
 
     (websocket-send *client* (target-get-targets-msg 1))
 
