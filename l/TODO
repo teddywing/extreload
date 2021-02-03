@@ -1,7 +1,7 @@
 TODO
 
 2021.01.24:
-- WebSockets URL to command line argument
+v WebSockets URL to command line argument
 - Command line arguments for extension IDs
 v How to wait until all messages are sent before closing the WS connection (2021.01.31)
 
@@ -19,3 +19,6 @@ v `remove` in `filter` (2021.01.30)
 2021.02.02:
 - Option to reload current tab (run `chrome.tabs.reload()` in the last target)
 v Config object (2021.02.02)
+
+2021.02.03:
+- Correct call ID numbering when multiple extensions are given
