@@ -1,8 +1,8 @@
 TODO
 
 2021.01.24:
-v WebSockets URL to command line argument
-- Command line arguments for extension IDs
+v WebSockets URL to command line argument (2021.02.03)
+v Command line arguments for extension IDs (2021.02.03)
 v How to wait until all messages are sent before closing the WS connection (2021.01.31)
 
 2021.01.30:
