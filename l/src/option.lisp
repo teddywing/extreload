@@ -37,5 +37,11 @@
 
         (opts:exit 64))
 
+    ;; Error if no extension IDs were given.
+    (when (null free-args)
+      (format *error-output* "error: missing extension IDs~%")
+
+      (opts:exit 64))
+
     (make-config :socket-url (getf options :socket-url)
                  :extension-ids free-args)))
