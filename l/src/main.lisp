@@ -19,22 +19,28 @@
          :long "version"))
 
 (defun main ()
-  (let ((config (parse-options)))
-    ;; Store the WebSocket client as a global.
-    (defvar *client* (ws-client config))
+  (handler-bind ((error
+                   #'(lambda (e)
+                       (format *error-output* "error: ~a~%" e)
 
-    ;; TODO: error if no `socket-url`
-    (with-websocket-connection (*client*)
-      (wsd:on :message *client*
-              #'(lambda (message)
-                  (ws-on-message message (extension-ids config))))
-      ; (wsd:on :message *client* #'(lambda (message) (ws-on-message message)))
-      ;; TODO: Maybe defvar *config* and store client in the config
+                       (opts:exit 69))))
 
-      (websocket-send *client* (target-get-targets-msg
-                                 (next-call-id *devtools-root-call-id*)))
+    (let ((config (parse-options)))
+      ;; Store the WebSocket client as a global.
+      (defvar *client* (ws-client config))
 
-      (wait-group:wait *wg*))))
+      ;; TODO: error if no `socket-url`
+      (with-websocket-connection (*client*)
+        (wsd:on :message *client*
+                #'(lambda (message)
+                    (ws-on-message message (extension-ids config))))
+        ; (wsd:on :message *client* #'(lambda (message) (ws-on-message message)))
+        ;; TODO: Maybe defvar *config* and store client in the config
+
+        (websocket-send *client* (target-get-targets-msg
+                                   (next-call-id *devtools-root-call-id*)))
+
+        (wait-group:wait *wg*)))))
 
 (defun ws-on-message (message extension-ids)
   (let* ((response (jsown:parse message))
