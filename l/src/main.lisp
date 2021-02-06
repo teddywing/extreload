@@ -21,6 +21,7 @@
 (defun main ()
   (handler-bind ((error
                    #'(lambda (e)
+                       ;; TODO: generic function for this and `handle-option-error`
                        (format *error-output* "error: ~a~%" e)
 
                        (opts:exit 69))))
