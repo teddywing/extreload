@@ -67,6 +67,7 @@
                     (if (search "not available" s)
                         nil)))))
 
+;;; TODO: Rename to attach-extensions
 (defun reload-extensions (targets extension-ids)
   (labels ((requested-extension-p (target)
              (find-if
