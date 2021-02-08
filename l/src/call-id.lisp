@@ -3,6 +3,7 @@
 (defclass call-id ()
   ((id
      :initform 0
+     :reader id
      :documentation "Current call ID.")))
 
 (defgeneric next-call-id (call-id)

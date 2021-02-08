@@ -44,4 +44,5 @@
       (opts:exit 64))
 
     (make-config :socket-url (getf options :socket-url)
+                 :reload-current-tab (getf options :reload-current-tab)
                  :extension-ids free-args)))

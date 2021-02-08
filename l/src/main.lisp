@@ -9,6 +9,9 @@
          :long "socket-url"
          :arg-parser #'identity
          :meta-var "SOCKET_URL")
+  (:name :reload-current-tab
+         :description "pass this to reload the active Chrome tab"
+         :long "reload-current-tab")
   (:name :help
          :description "print this help menu"
          :short #\h
@@ -34,7 +37,10 @@
       (with-websocket-connection (*client*)
         (wsd:on :message *client*
                 #'(lambda (message)
-                    (ws-on-message message (extension-ids config))))
+                    (ws-on-message
+                      message
+                      (extension-ids config)
+                      (reload-current-tab config))))
         ; (wsd:on :message *client* #'(lambda (message) (ws-on-message message)))
         ;; TODO: Maybe defvar *config* and store client in the config
 
@@ -43,7 +49,7 @@
 
         (wait-group:wait *wg*)))))
 
-(defun ws-on-message (message extension-ids)
+(defun ws-on-message (message extension-ids reload-current-tab)
   (let* ((response (jsown:parse message))
          (targets (parse-get-targets-response response)))
     (if targets
@@ -51,11 +57,28 @@
           (extension-targets targets)
           extension-ids))
 
+    ;; TODO: How to know it's the last message so we only reload the current tab once?
+
     (if (target-attached-to-target-msg-p response)
-        (reload-extension
-          (json-obj-get
-            (json-obj-get response "params")
-            "sessionId")))
+        ;; TODO: Need a waitgroup:add for each occurrence of extension in extension-ids
+        (reload-extension (json-obj-get
+                            (json-obj-get response "params")
+                            "sessionId")))
+
+    ;; TODO: only if config.reload-current-tab
+    (when reload-current-tab
+      (let ((current-call-id (json-obj-get response "id")))
+        (when (and current-call-id
+                   (= current-call-id
+                      (id *devtools-root-call-id*)))
+
+          (sleep 1)
+          (reload-tab (json-obj-get
+                        (json-obj-get response "result")
+                        "sessionId")))))
+
+    (format t "Response: ~a~%" response)
+    (format t "~a~%" *wg*)
 
     (wait-group:done *wg*)))
 
@@ -89,8 +112,17 @@
 
 (defun reload-extension (session-id)
   ;; Use call ID "1" as this is the first message sent to the attached target.
+  (format t "reloading EXTENSION~%")
   (websocket-send *client*
             (runtime-evaluate-msg 1 session-id "chrome.runtime.reload()")))
+
+(defun reload-tab (session-id)
+  ;; Use call ID "2" as this will always be sent after a `reload-extension`
+  ;; message.
+  (format t "reloading NOW~%")
+  (websocket-send
+    *client*
+    (runtime-evaluate-msg 2 session-id "chrome.tabs.reload()")))
 
 (defun extension-targets (targets)
   (labels ((extensionp (target)
