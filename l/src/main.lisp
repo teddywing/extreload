@@ -2,6 +2,8 @@
 
 (defvar *wg* (wait-group:make-wait-group))
 (defvar *devtools-root-call-id* (make-instance 'call-id))
+(defvar *reloaded-count* 0)
+(defvar *last-session-id* "")
 
 (opts:define-opts
   (:name :socket-url
@@ -66,16 +68,32 @@
                             "sessionId")))
 
     ;; TODO: only if config.reload-current-tab
-    (when reload-current-tab
-      (let ((current-call-id (json-obj-get response "id")))
-        (when (and current-call-id
-                   (= current-call-id
-                      (id *devtools-root-call-id*)))
 
+;; If last session ID corresponds,
+; Response: (OBJ (id . 2)
+;            (result OBJ (sessionId . C24A99CA53CBD76EB68BCBD0D172A4E7)))
+
+    (when reload-current-tab
+      ; (when (and (= (or (json-obj-get response "id") -1) 1)
+      (when (and 
+                 (= *reloaded-count*
+                    ;; TODO: Might not work because there could be multiple instances of a single extension ID I think
+                    ;; Yes, extension-ids could be less than *reloaded-count*. But we could use the count of extension-targets
+                    (length extension-ids))
+
+                 (string= (json-obj-get
+                            (json-obj-get response "result")
+                            "sessionId")
+                          *last-session-id*))
+      ; (let ((current-call-id (json-obj-get response "id")))
+      ;   (when (and current-call-id
+      ;              (= current-call-id
+      ;                 (id *devtools-root-call-id*)))
+      ;
           (sleep 1)
           (reload-tab (json-obj-get
                         (json-obj-get response "result")
-                        "sessionId")))))
+                        "sessionId"))))
 
     (format t "Response: ~a~%" response)
     (format t "~a~%" *wg*)
@@ -113,8 +131,11 @@
 (defun reload-extension (session-id)
   ;; Use call ID "1" as this is the first message sent to the attached target.
   (format t "reloading EXTENSION~%")
+  (setf *last-session-id* session-id)
   (websocket-send *client*
-            (runtime-evaluate-msg 1 session-id "chrome.runtime.reload()")))
+            (runtime-evaluate-msg 1 session-id "chrome.runtime.reload()"))
+
+  (incf *reloaded-count*))
 
 (defun reload-tab (session-id)
   ;; Use call ID "2" as this will always be sent after a `reload-extension`
