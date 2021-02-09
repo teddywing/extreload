@@ -3,6 +3,7 @@
 (defvar *wg* (wait-group:make-wait-group))
 (defvar *devtools-root-call-id* (make-instance 'call-id))
 (defvar *reloaded-count* 0)
+(defvar *extension-targets-count* 0)
 (defvar *last-session-id* "")
 
 (opts:define-opts
@@ -54,10 +55,11 @@
 (defun ws-on-message (message extension-ids reload-current-tab)
   (let* ((response (jsown:parse message))
          (targets (parse-get-targets-response response)))
-    (if targets
-        (reload-extensions
-          (extension-targets targets)
-          extension-ids))
+    (when targets
+      (let ((targets (extension-targets targets)))
+        (setf *extension-targets-count* (length targets))
+
+        (reload-extensions targets extension-ids)))
 
     ;; TODO: How to know it's the last message so we only reload the current tab once?
 
@@ -77,9 +79,8 @@
       ; (when (and (= (or (json-obj-get response "id") -1) 1)
       (when (and 
                  (= *reloaded-count*
-                    ;; TODO: Might not work because there could be multiple instances of a single extension ID I think
-                    ;; Yes, extension-ids could be less than *reloaded-count*. But we could use the count of extension-targets
-                    (length extension-ids))
+                    ;; TODO: Probably want to reload on all extension reload calls
+                    *extension-targets-count*)
 
                  (string= (json-obj-get
                             (json-obj-get response "result")
