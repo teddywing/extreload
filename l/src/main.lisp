@@ -90,10 +90,14 @@
       ;              (= current-call-id
       ;                 (id *devtools-root-call-id*)))
       ;
-          (sleep 1)
+          ; (sleep 1)
           (reload-tab (json-obj-get
                         (json-obj-get response "result")
                         "sessionId"))))
+
+    ;; Failed to reload tab.
+    (when (jsown:keyp (json-obj-get response "result") "exceptionDetails")
+      (reload-tab (json-obj-get response "sessionId")))
 
     (format t "Response: ~a~%" response)
     (format t "~a~%" *wg*)
