@@ -23,3 +23,6 @@ v Config object (2021.02.02)
 2021.02.03:
 v Correct call ID numbering when multiple extensions are given (2021.02.03)
 v Catch errors from all signals and print the error message instead of opening the debugger (2021.02.05)
+
+2021.02.08:
+- Find out if we can take a port number only instead of a full WebSocket URL
