@@ -24,6 +24,9 @@
            ("method" . "Runtime.evaluate")
            ("params" . (:obj ("expression" . ,expression))))))
 
+(defun runtime-evaluate-msg-p (message)
+  (jsown:keyp (json-obj-get message "result") "sessionId"))
+
 (defun parse-get-targets-response (response)
   (let* ((result (json-obj-get response "result"))
          (targetInfos (json-obj-get result "targetInfos")))
