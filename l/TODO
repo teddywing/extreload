@@ -17,7 +17,7 @@ v `remove` in `filter` (2021.01.30)
 - Timeout
 
 2021.02.02:
-- Option to reload current tab (run `chrome.tabs.reload()` in the last target)
+v Option to reload current tab (run `chrome.tabs.reload()` in the last target) (2021.02.08)
 v Config object (2021.02.02)
 
 2021.02.03:
