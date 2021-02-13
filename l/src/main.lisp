@@ -25,12 +25,7 @@
          :long "version"))
 
 (defun main ()
-  (handler-bind ((error
-                   #'(lambda (e)
-                       ;; TODO: generic function for this and `handle-option-error`
-                       (format *error-output* "error: ~a~%" e)
-
-                       (opts:exit 69))))
+  (handler-bind ((error #'(lambda (e) (exit-with-error e 69))))
 
     (let ((config (parse-options)))
       ;; Store the WebSocket client as a global.

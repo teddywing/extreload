@@ -5,10 +5,13 @@
      (when value
        ,@body)))
 
-(defun handle-option-error (condition)
+(defun exit-with-error (condition exit-code)
   (format *error-output* "error: ~a~%" condition)
 
-  (opts:exit 64))
+  (opts:exit exit-code))
+
+(defun handle-option-error (condition)
+  (exit-with-error condition 64))
 
 (defun parse-options ()
   (multiple-value-bind (options free-args)
