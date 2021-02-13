@@ -25,7 +25,8 @@
          :long "version"))
 
 (defun main ()
-  (handler-bind ((error #'(lambda (e) (exit-with-error e 69))))
+  (handler-bind ((error #'(lambda (e)
+                            (exit-with-error e sysexits:+unavailable+))))
 
     (let ((config (parse-options)))
       ;; Store the WebSocket client as a global.

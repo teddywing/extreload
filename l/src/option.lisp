@@ -11,7 +11,7 @@
   (opts:exit exit-code))
 
 (defun handle-option-error (condition)
-  (exit-with-error condition 64))
+  (exit-with-error condition sysexits:+usage+))
 
 (defun parse-options ()
   (multiple-value-bind (options free-args)
@@ -28,23 +28,23 @@
         :usage-of "extreload"
         :args "EXTENSION_ID...")
 
-      (opts:exit 64))
+      (opts:exit sysexits:+usage+))
 
     (when-option (options :version)
       (format t "~a~%" (asdf:component-version (asdf:find-system :extreload)))
 
-      (opts:exit 0))
+      (opts:exit sysexits:+ok+))
 
     (when (null (getf options :socket-url))
         (format *error-output* "error: '--socket-url' is required~%")
 
-        (opts:exit 64))
+        (opts:exit sysexits:+usage+))
 
     ;; Error if no extension IDs were given.
     (when (null free-args)
       (format *error-output* "error: missing extension IDs~%")
 
-      (opts:exit 64))
+      (opts:exit sysexits:+usage+))
 
     (make-config :socket-url (getf options :socket-url)
                  :reload-current-tab (getf options :reload-current-tab)

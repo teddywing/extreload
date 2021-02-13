@@ -1,6 +1,7 @@
 (asdf:defsystem extreload
   :version "0.0.1"
   :depends-on (:jsown
+                :sysexits
                 :unix-opts
                 :wait-group
                 :websocket-driver-client)
