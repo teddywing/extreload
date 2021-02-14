@@ -26,3 +26,9 @@ v Catch errors from all signals and print the error message instead of opening t
 
 2021.02.08:
 x Find out if we can take a port number only instead of a full WebSocket URL (2021.02.14)
+
+2021.02.14:
+- Clean up code
+- Documentation
+- Tab reload not working consistently
+- Remove or hide debug output
