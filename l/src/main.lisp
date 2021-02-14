@@ -32,7 +32,6 @@
       ;; Store the WebSocket client as a global.
       (defvar *client* (ws-client config))
 
-      ;; TODO: error if no `socket-url`
       (with-websocket-connection (*client*)
         (wsd:on :message *client*
                 #'(lambda (message)
@@ -40,8 +39,6 @@
                       message
                       (extension-ids config)
                       (reload-current-tab config))))
-        ; (wsd:on :message *client* #'(lambda (message) (ws-on-message message)))
-        ;; TODO: Maybe defvar *config* and store client in the config
 
         (websocket-send *client* (target-get-targets-msg
                                    (next-call-id *devtools-root-call-id*)))
@@ -57,41 +54,16 @@
 
         (reload-extensions targets extension-ids)))
 
-    ;; TODO: How to know it's the last message so we only reload the current tab once?
-
     (if (target-attached-to-target-msg-p response)
-        ;; TODO: Need a waitgroup:add for each occurrence of extension in extension-ids
         (reload-extension (json-obj-get
                             (json-obj-get response "params")
                             "sessionId")))
 
-    ;; TODO: only if config.reload-current-tab
-
-;; If last session ID corresponds,
-; Response: (OBJ (id . 2)
-;            (result OBJ (sessionId . C24A99CA53CBD76EB68BCBD0D172A4E7)))
-
     (when (and reload-current-tab
                (runtime-evaluate-msg-p response))
-      ; (when (and (= (or (json-obj-get response "id") -1) 1)
-      ; (when (and 
-                 ; (= *reloaded-count*
-                 ;    ;; TODO: Probably want to reload on all extension reload calls
-                 ;    *extension-targets-count*)
-                 ;
-                 ; (string= (json-obj-get
-                 ;            (json-obj-get response "result")
-                 ;            "sessionId")
-                 ;          *last-session-id*))
-      ; (let ((current-call-id (json-obj-get response "id")))
-      ;   (when (and current-call-id
-      ;              (= current-call-id
-      ;                 (id *devtools-root-call-id*)))
-      ;
-          ; (sleep 1)
-          (reload-tab (json-obj-get
-                        (json-obj-get response "result")
-                        "sessionId")))
+      (reload-tab (json-obj-get
+                    (json-obj-get response "result")
+                    "sessionId")))
 
     ;; Failed to reload tab.
     (when (jsown:keyp (json-obj-get response "result") "exceptionDetails")
