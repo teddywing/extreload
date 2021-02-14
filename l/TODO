@@ -13,7 +13,7 @@ v `remove` in `filter` (2021.01.30)
 - Release build with ECL
 
 2021.01.31:
-- sysexits
+v sysexits (2021.02.13)
 - Timeout
 
 2021.02.02:
