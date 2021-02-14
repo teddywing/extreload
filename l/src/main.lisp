@@ -6,6 +6,8 @@
 (defvar *extension-targets-count* 0)
 (defvar *last-session-id* "")
 
+(defconstant +timeout-seconds+ 5)
+
 (opts:define-opts
   (:name :socket-url
          :description "DevTools protocol WebSocket URL"
@@ -32,18 +34,19 @@
       ;; Store the WebSocket client as a global.
       (defvar *client* (ws-client config))
 
-      (with-websocket-connection (*client*)
-        (wsd:on :message *client*
-                #'(lambda (message)
-                    (ws-on-message
-                      message
-                      (extension-ids config)
-                      (reload-current-tab config))))
+      (trivial-timeout:with-timeout (+timeout-seconds+)
+        (with-websocket-connection (*client*)
+          (wsd:on :message *client*
+                  #'(lambda (message)
+                      (ws-on-message
+                       message
+                       (extension-ids config)
+                       (reload-current-tab config))))
 
-        (websocket-send *client* (target-get-targets-msg
-                                   (next-call-id *devtools-root-call-id*)))
+          (websocket-send *client* (target-get-targets-msg
+                                    (next-call-id *devtools-root-call-id*)))
 
-        (wait-group:wait *wg*)))))
+          (wait-group:wait *wg*))))))
 
 (defun ws-on-message (message extension-ids reload-current-tab)
   (let* ((response (jsown:parse message))

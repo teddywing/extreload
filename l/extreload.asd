@@ -2,6 +2,7 @@
   :version "0.0.1"
   :depends-on (:jsown
                 :sysexits
+                :trivial-timeout
                 :unix-opts
                 :wait-group
                 :websocket-driver-client)
