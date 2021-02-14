@@ -55,7 +55,7 @@
       (let ((targets (extension-targets targets)))
         (setf *extension-targets-count* (length targets))
 
-        (reload-extensions targets extension-ids)))
+        (attach-extensions targets extension-ids)))
 
     (if (target-attached-to-target-msg-p response)
         (reload-extension (json-obj-get
@@ -85,8 +85,7 @@
                     (if (search "not available" s)
                         nil)))))
 
-;;; TODO: Rename to attach-extensions
-(defun reload-extensions (targets extension-ids)
+(defun attach-extensions (targets extension-ids)
   (labels ((requested-extension-p (target)
              (find-if
                #'(lambda (id)
