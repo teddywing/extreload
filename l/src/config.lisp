@@ -26,16 +26,6 @@
               ":socket-url ~s :extension-ids ~s :reload-current-tab ~s :ws-client ~s"
               socket-url extension-ids reload-current-tab ws-client))))
 
-;; TODO: (make-config) instead, initialise ws-client in initialiser
-(defgeneric (setf socket-url) (url config))
-
-(defmethod (setf socket-url) (url (config config))
-  "Set `socket-url` and initialise a new `websocket-driver:client` in the
-`ws-client` slot"
-  (setf (slot-value config 'socket-url) url)
-
-  (setf (slot-value config 'ws-client) (wsd:make-client url)))
-
 (defun make-config (&key socket-url extension-ids reload-current-tab)
   (let ((config (make-instance 'config
                                :socket-url socket-url
