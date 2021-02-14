@@ -1,0 +1,3 @@
+[submodule "l/lib/sysexits"]
+	path = l/lib/sysexits
+	url = https://github.com/teddywing/cl-sysexits.git
