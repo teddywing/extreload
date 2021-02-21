@@ -51,6 +51,9 @@
 (defun ws-on-message (message extension-ids reload-current-tab)
   (let* ((response (jsown:parse message))
          (targets (parse-get-targets-response response)))
+    (format t "Response: ~a~%" response)
+    (format t "~a~%" *wg*)
+
     (when targets
       (let ((targets (extension-targets targets)))
         (setf *extension-targets-count* (length targets))
@@ -64,6 +67,7 @@
 
     (when (and reload-current-tab
                (runtime-evaluate-msg-p response))
+      (format t "Reloading based on response: ~a~%" response)
       (reload-tab (json-obj-get
                     (json-obj-get response "result")
                     "sessionId")))
@@ -71,9 +75,6 @@
     ;; Failed to reload tab.
     (when (jsown:keyp (json-obj-get response "result") "exceptionDetails")
       (reload-tab (json-obj-get response "sessionId")))
-
-    (format t "Response: ~a~%" response)
-    (format t "~a~%" *wg*)
 
     (wait-group:done *wg*)))
 
