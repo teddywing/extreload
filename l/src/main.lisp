@@ -124,6 +124,11 @@
 (defun reload-tab (session-id)
   ;; Use call ID "2" as this will always be sent after a `reload-extension`
   ;; message.
+
+  ;; Two response messages always come back from the `chrome.tabs.reload()`
+  ;; messages, so we need to add a second increment to the wait group.
+  (wait-group:add *wg*)
+
   (websocket-send
     *client*
     (runtime-evaluate-msg
