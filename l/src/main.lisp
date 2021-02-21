@@ -2,6 +2,7 @@
 
 (defvar *wg* (wait-group:make-wait-group))
 (defvar *devtools-root-call-id* (make-instance 'call-id))
+(defvar *devtools-secondary-call-id* (make-instance 'call-id))
 (defvar *reloaded-count* 0)
 (defvar *extension-targets-count* 0)
 (defvar *last-session-id* "")
@@ -109,8 +110,12 @@
   ;; Use call ID "1" as this is the first message sent to the attached target.
   (format t "reloading EXTENSION~%")
   (setf *last-session-id* session-id)
-  (websocket-send *client*
-            (runtime-evaluate-msg 1 session-id "chrome.runtime.reload()"))
+  (websocket-send
+    *client*
+    (runtime-evaluate-msg
+      (next-call-id *devtools-secondary-call-id*)
+      session-id
+      "chrome.runtime.reload()"))
 
   (incf *reloaded-count*))
 
@@ -120,7 +125,10 @@
   (format t "reloading NOW~%")
   (websocket-send
     *client*
-    (runtime-evaluate-msg 2 session-id "chrome.tabs.reload()")))
+    (runtime-evaluate-msg
+      (next-call-id *devtools-secondary-call-id*)
+      session-id
+      "chrome.tabs.reload()")))
 
 (defun extension-targets (targets)
   (labels ((extensionp (target)
