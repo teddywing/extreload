@@ -48,4 +48,5 @@
 
     (make-config :socket-url (getf options :socket-url)
                  :reload-current-tab (getf options :reload-current-tab)
+                 :debug-output (getf options :debug)
                  :extension-ids free-args)))

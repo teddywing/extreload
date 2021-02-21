@@ -18,6 +18,9 @@
   (:name :reload-current-tab
          :description "pass this to reload the active Chrome tab"
          :long "reload-current-tab")
+  (:name :debug
+         :description "print debug output"
+         :long "debug")
   (:name :help
          :description "print this help menu"
          :short #\h
@@ -42,18 +45,19 @@
                       (ws-on-message
                        message
                        (extension-ids config)
-                       (reload-current-tab config))))
+                       config)))
 
           (websocket-send *client* (target-get-targets-msg
                                     (next-call-id *devtools-root-call-id*)))
 
           (wait-group:wait *wg*))))))
 
-(defun ws-on-message (message extension-ids reload-current-tab)
+(defun ws-on-message (message extension-ids config)
   (let* ((response (jsown:parse message))
          (targets (parse-get-targets-response response)))
-    (format t "Response: ~a~%" response)
-    (format t "~a~%" *wg*)
+    (when (debug-output config)
+      (format t "Response: ~a~%" response)
+      (format t "~a~%" *wg*))
 
     (when targets
       (let ((targets (extension-targets targets)))
@@ -66,9 +70,8 @@
                             (json-obj-get response "params")
                             "sessionId")))
 
-    (when (and reload-current-tab
+    (when (and (reload-current-tab config)
                (runtime-evaluate-msg-p response))
-      (format t "Reloading based on response: ~a~%" response)
       (reload-tab (json-obj-get
                     (json-obj-get response "result")
                     "sessionId")))
@@ -108,7 +111,6 @@
 
 (defun reload-extension (session-id)
   ;; Use call ID "1" as this is the first message sent to the attached target.
-  (format t "reloading EXTENSION~%")
   (setf *last-session-id* session-id)
   (websocket-send
     *client*
@@ -122,7 +124,6 @@
 (defun reload-tab (session-id)
   ;; Use call ID "2" as this will always be sent after a `reload-extension`
   ;; message.
-  (format t "reloading NOW~%")
   (websocket-send
     *client*
     (runtime-evaluate-msg
