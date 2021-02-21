@@ -41,6 +41,7 @@
                          extension-ids
                          reload-current-tab
                          debug-output)
+  "Initialise a new config."
   (let ((config (make-instance 'config
                                :socket-url socket-url
                                :extension-ids extension-ids
