@@ -110,7 +110,6 @@
                 target-id))))
 
 (defun reload-extension (session-id)
-  ;; Use call ID "1" as this is the first message sent to the attached target.
   (setf *last-session-id* session-id)
   (websocket-send
     *client*
@@ -122,9 +121,6 @@
   (incf *reloaded-count*))
 
 (defun reload-tab (session-id)
-  ;; Use call ID "2" as this will always be sent after a `reload-extension`
-  ;; message.
-
   ;; Two response messages always come back from the `chrome.tabs.reload()`
   ;; messages, so we need to add a second increment to the wait group.
   (wait-group:add *wg*)
