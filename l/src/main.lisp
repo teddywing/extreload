@@ -139,5 +139,7 @@
     (filter #'extensionp targets)))
 
 (defun websocket-send (client data)
+  (format t "Sending: ~a~%" data)
+
   (wsd:send client data)
   (wait-group:add *wg*))
