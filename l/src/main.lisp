@@ -78,6 +78,11 @@
 
     ;; Failed to reload tab.
     (when (jsown:keyp (json-obj-get response "result") "exceptionDetails")
+      ;; `reload-tab` adds an extra increment to the wait group. If the call
+      ;; fails, we only receive one message instead of two, so the wait group
+      ;; must be decremented to match.
+      (wait-group:done *wg*)
+
       (reload-tab (json-obj-get response "sessionId")))
 
     (wait-group:done *wg*)))
