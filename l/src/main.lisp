@@ -3,9 +3,6 @@
 (defvar *wg* (wait-group:make-wait-group))
 (defvar *devtools-root-call-id* (make-instance 'call-id))
 (defvar *devtools-secondary-call-id* (make-instance 'call-id))
-(defvar *reloaded-count* 0)
-(defvar *extension-targets-count* 0)
-(defvar *last-session-id* "")
 
 (defconstant +timeout-seconds+ 5)
 
@@ -41,7 +38,6 @@
 
     (when targets
       (let ((targets (extension-targets targets)))
-        (setf *extension-targets-count* (length targets))
 
         (attach-extensions targets extension-ids)))
 
@@ -95,15 +91,12 @@
                 target-id))))
 
 (defun reload-extension (session-id)
-  (setf *last-session-id* session-id)
   (websocket-send
     (ws-client *config*)
     (runtime-evaluate-msg
       (next-call-id *devtools-secondary-call-id*)
       session-id
-      "chrome.runtime.reload()"))
-
-  (incf *reloaded-count*))
+      "chrome.runtime.reload()")))
 
 (defun reload-tab (session-id)
   ;; Two response messages always come back from the `chrome.tabs.reload()`
