@@ -10,7 +10,7 @@ v `string=` (2021.01.30)
 v `unwind-protect` `with-` macro to close the connection (2021.01.31)
 v wait-group (2021.01.31)
 v `remove` in `filter` (2021.01.30)
-- Release build with ECL
+x Release build with ECL (2021.02.27) (Trouble building. The compressed SBCL build is small enough for my liking.)
 
 2021.01.31:
 v sysexits (2021.02.13)
@@ -28,7 +28,11 @@ v Catch errors from all signals and print the error message instead of opening t
 x Find out if we can take a port number only instead of a full WebSocket URL (2021.02.14)
 
 2021.02.14:
-- Clean up code
-- Documentation
+v Clean up code (2021.02.27)
+v Documentation (2021.02.27)
 v Tab reload not working consistently (2021.02.20)
 v Remove or hide debug output (2021.02.27)
+
+2021.02.27:
+- Move Lisp program out of `l/`
+- Man page
