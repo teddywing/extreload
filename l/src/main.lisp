@@ -9,27 +9,6 @@
 
 (defconstant +timeout-seconds+ 5)
 
-(opts:define-opts
-  (:name :socket-url
-         :description "DevTools protocol WebSocket URL"
-         :long "socket-url"
-         :arg-parser #'identity
-         :meta-var "SOCKET_URL")
-  (:name :reload-current-tab
-         :description "pass this to reload the active Chrome tab"
-         :long "reload-current-tab")
-  (:name :debug
-         :description "print debug output"
-         :long "debug")
-  (:name :help
-         :description "print this help menu"
-         :short #\h
-         :long "help")
-  (:name :version
-         :description "show the program version"
-         :short #\V
-         :long "version"))
-
 (defun main ()
   (handler-bind ((error #'(lambda (e)
                             (exit-with-error e sysexits:+unavailable+))))

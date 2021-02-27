@@ -2,6 +2,28 @@
 
 (in-package :extreload)
 
+;; Available command line options.
+(opts:define-opts
+  (:name :socket-url
+         :description "DevTools protocol WebSocket URL"
+         :long "socket-url"
+         :arg-parser #'identity
+         :meta-var "SOCKET_URL")
+  (:name :reload-current-tab
+         :description "pass this to reload the active Chrome tab"
+         :long "reload-current-tab")
+  (:name :debug
+         :description "print debug output"
+         :long "debug")
+  (:name :help
+         :description "print this help menu"
+         :short #\h
+         :long "help")
+  (:name :version
+         :description "show the program version"
+         :short #\V
+         :long "version"))
+
 (defmacro when-option ((options option) &body body)
   "When `option` is present in `options`, run `body`."
   `(let ((value (getf ,options ,option)))
