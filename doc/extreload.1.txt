@@ -1,0 +1,47 @@
+extreload(1)
+============
+
+NAME
+----
+extreload - Reload Chrome extensions
+
+SYNOPSIS
+--------
+'extreload' [options] EXTENSION_ID...
+
+DESCRIPTION
+-----------
+Reload Chrome extensions. All extension IDs given in positional arguments will
+be reloaded.
+
+The '--socket-url' flag must be provided in order to connect to Chrome over the
+DevTools Protocol. It will resemble this:
+
+	ws://127.0.0.1:55755/devtools/browser/208ae571-d691-4c98-ad41-3a15d507b656
+
+Chrome must be started with the '--remote-debugging-port' flag to enable the
+DevTools Protocol, as well as the '--silent-debugger-extension-api' flag to
+allow debug access to extensions. For example:
+
+	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+	    --silent-debugger-extension-api \
+	    --remote-debugging-port=0 &
+
+The WebSocket URL will be printed to the console.
+
+OPTIONS
+-------
+--socket-url=SOCKET_URL::
+	The DevTools Protocol socket URL to connect to Chrome. This flag is required.
+
+--reload-current-tab::
+	Reload the current Chrome tab.
+
+--debug::
+	Print WebSocket debug messages to standard output.
+
+-h, --help::
+	Print usage help.
+
+-V, --version::
+	Print the program version.

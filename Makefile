@@ -23,3 +23,10 @@ release:
 				(extreload:main) \
 				(si:exit)))' \
 		--eval '(quit)'
+
+
+.PHONY: doc
+doc: doc/extreload.1
+
+doc/extreload.1: doc/extreload.1.txt
+	a2x --no-xmllint --format manpage $<

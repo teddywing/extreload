@@ -1,0 +1,91 @@
+'\" t
+.\"     Title: extreload
+.\"    Author: [FIXME: author] [see http://www.docbook.org/tdg5/en/html/author]
+.\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
+.\"      Date: 02/27/2021
+.\"    Manual: \ \&
+.\"    Source: \ \&
+.\"  Language: English
+.\"
+.TH "EXTRELOAD" "1" "02/27/2021" "\ \&" "\ \&"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+extreload \- Reload Chrome extensions
+.SH "SYNOPSIS"
+.sp
+\fIextreload\fR [options] EXTENSION_ID\&...
+.SH "DESCRIPTION"
+.sp
+Reload Chrome extensions\&. All extension IDs given in positional arguments will be reloaded\&.
+.sp
+The \fI\-\-socket\-url\fR flag must be provided in order to connect to Chrome over the DevTools Protocol\&. It will resemble this:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+ws://127\&.0\&.0\&.1:55755/devtools/browser/208ae571\-d691\-4c98\-ad41\-3a15d507b656
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+Chrome must be started with the \fI\-\-remote\-debugging\-port\fR flag to enable the DevTools Protocol, as well as the \fI\-\-silent\-debugger\-extension\-api\fR flag to allow debug access to extensions\&. For example:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+/Applications/Google\e Chrome\&.app/Contents/MacOS/Google\e Chrome \e
+    \-\-silent\-debugger\-extension\-api \e
+    \-\-remote\-debugging\-port=0 &
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+The WebSocket URL will be printed to the console\&.
+.SH "OPTIONS"
+.PP
+\-\-socket\-url=SOCKET_URL
+.RS 4
+The DevTools Protocol socket URL to connect to Chrome\&. This flag is required\&.
+.RE
+.PP
+\-\-reload\-current\-tab
+.RS 4
+Reload the current Chrome tab\&.
+.RE
+.PP
+\-\-debug
+.RS 4
+Print WebSocket debug messages to standard output\&.
+.RE
+.PP
+\-h, \-\-help
+.RS 4
+Print usage help\&.
+.RE
+.PP
+\-V, \-\-version
+.RS 4
+Print the program version\&.
+.RE
