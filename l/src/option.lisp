@@ -1,19 +1,27 @@
+;;;; Command line options.
+
 (in-package :extreload)
 
 (defmacro when-option ((options option) &body body)
+  "When `option` is present in `options`, run `body`."
   `(let ((value (getf ,options ,option)))
      (when value
        ,@body)))
 
 (defun exit-with-error (condition exit-code)
+  "Print the error associated with `condition` on standard error, then exit
+with code `exit-code`."
   (format *error-output* "error: ~a~%" condition)
 
   (opts:exit exit-code))
 
 (defun handle-option-error (condition)
+  "Handle errors related to command line options. Prints the error specified by
+`condition` and exits with EX_USAGE."
   (exit-with-error condition sysexits:+usage+))
 
 (defun parse-options ()
+  "Parse command line options."
   (multiple-value-bind (options free-args)
     (handler-bind
       ((opts:unknown-option #'handle-option-error)
