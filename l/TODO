@@ -31,4 +31,4 @@ x Find out if we can take a port number only instead of a full WebSocket URL (20
 - Clean up code
 - Documentation
 v Tab reload not working consistently (2021.02.20)
-- Remove or hide debug output
+v Remove or hide debug output (2021.02.27)
