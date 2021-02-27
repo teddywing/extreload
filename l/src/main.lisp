@@ -34,23 +34,24 @@
   (handler-bind ((error #'(lambda (e)
                             (exit-with-error e sysexits:+unavailable+))))
 
-    (let ((config (parse-options)))
-      ;; Store the WebSocket client as a global.
-      (defvar *client* (ws-client config))
+    ;; Store the config as a global.
+    (defvar *config* (parse-options))
 
-      (trivial-timeout:with-timeout (+timeout-seconds+)
-        (with-websocket-connection (*client*)
-          (wsd:on :message *client*
-                  #'(lambda (message)
-                      (ws-on-message
-                       message
-                       (extension-ids config)
-                       config)))
+    (trivial-timeout:with-timeout (+timeout-seconds+)
+      (with-websocket-connection ((ws-client *config*))
+        (wsd:on :message (ws-client *config*)
+                #'(lambda (message)
+                    (ws-on-message
+                      message
+                      (extension-ids *config*)
+                      *config*)))
 
-          (websocket-send *client* (target-get-targets-msg
-                                    (next-call-id *devtools-root-call-id*)))
+        (websocket-send
+          (ws-client *config*)
+          (target-get-targets-msg
+            (next-call-id *devtools-root-call-id*)))
 
-          (wait-group:wait *wg*))))))
+        (wait-group:wait *wg*)))))
 
 (defun ws-on-message (message extension-ids config)
   (let* ((response (jsown:parse message))
@@ -109,7 +110,7 @@
 
 (defun attach-to-target (extension)
   (let ((target-id (json-obj-get extension "targetId")))
-    (websocket-send *client*
+    (websocket-send (ws-client *config*)
               (target-attach-to-target-msg
                 (next-call-id *devtools-root-call-id*)
                 target-id))))
@@ -117,7 +118,7 @@
 (defun reload-extension (session-id)
   (setf *last-session-id* session-id)
   (websocket-send
-    *client*
+    (ws-client *config*)
     (runtime-evaluate-msg
       (next-call-id *devtools-secondary-call-id*)
       session-id
@@ -131,7 +132,7 @@
   (wait-group:add *wg*)
 
   (websocket-send
-    *client*
+    (ws-client *config*)
     (runtime-evaluate-msg
       (next-call-id *devtools-secondary-call-id*)
       session-id
@@ -145,7 +146,8 @@
     (filter #'extensionp targets)))
 
 (defun websocket-send (client data)
-  (format t "Sending: ~a~%" data)
+  (when (debug-output *config*)
+    (format t "Sending: ~a~%" data))
 
   (wsd:send client data)
   (wait-group:add *wg*))
