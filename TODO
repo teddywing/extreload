@@ -34,5 +34,5 @@ v Tab reload not working consistently (2021.02.20)
 v Remove or hide debug output (2021.02.27)
 
 2021.02.27:
-- Move Lisp program out of `l/`
-- Man page
+v Move Lisp program out of `l/`
+v Man page
