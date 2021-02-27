@@ -34,6 +34,10 @@
   "Returns true if `message` is a response to `Runtime.evaluate`."
   (jsown:keyp (json-obj-get message "result") "sessionId"))
 
+(defun runtime-evaluate-exception-p (message)
+  "Returns true if `message` describes a runtime exception"
+  (jsown:keyp (json-obj-get message "result") "exceptionDetails"))
+
 (defun parse-get-targets-response (response)
   "Parses a list of target info objects from the response to `Target.getTargets`."
   (let* ((result (json-obj-get response "result"))

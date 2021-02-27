@@ -78,7 +78,7 @@
                     "sessionId")))
 
     ;; Failed to reload tab.
-    (when (jsown:keyp (json-obj-get response "result") "exceptionDetails")
+    (when (runtime-evaluate-exception-p response)
       ;; `reload-tab` adds an extra increment to the wait group. If the call
       ;; fails, we only receive one message instead of two, so the wait group
       ;; must be decremented to match.
