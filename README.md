@@ -35,6 +35,7 @@ On Mac OS X, the program can be installed with Homebrew:
 ## Build
 I’ve only tested the build with SBCL.
 
+	$ git submodule init && git submodule update
 	$ make build
 
 
