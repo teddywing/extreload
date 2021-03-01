@@ -30,7 +30,7 @@ DIST_MAN_PAGE := $(DIST)/share/man/man1/extreload.1
 .PHONY: build
 build: extreload
 
-extreload:
+extreload: extreload.asd lib/* src/*.lisp
 	$(LISP) --load extreload.asd \
 		--eval '(ql:quickload :extreload)' \
 		--eval '(asdf:make :extreload)' \
