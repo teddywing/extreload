@@ -4,3 +4,6 @@
 [submodule "lib/wait-group"]
 	path = lib/wait-group
 	url = https://github.com/teddywing/cl-wait-group.git
+[submodule "lib/with-user-abort"]
+	path = lib/with-user-abort
+	url = https://github.com/compufox/with-user-abort.git
