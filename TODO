@@ -38,4 +38,4 @@ v Move Lisp program out of `l/`
 v Man page
 
 2021.03.01:
-- C-c must exit the program
+v C-c must exit the program (2021.03.02)
