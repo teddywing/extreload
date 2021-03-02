@@ -18,4 +18,7 @@
 
 (defpackage :extreload
   (:use :cl)
+
+  (:local-nicknames (:interrupt :with-user-abort))
+
   (:export :main))

@@ -28,27 +28,33 @@
   "Global timeout. The program will exit at the end of this delay.")
 
 (defun main ()
-  (handler-bind ((error #'(lambda (e)
-                            (exit-with-error e sysexits:+unavailable+))))
+  (handler-case
+      (interrupt:with-user-abort
+        (handler-bind ((error #'(lambda (e)
+                                  (exit-with-error e sysexits:+unavailable+))))
 
-    ;; Store the config as a global.
-    (defvar *config* (parse-options))
+          ;; Store the config as a global.
+          (defvar *config* (parse-options))
 
-    (trivial-timeout:with-timeout (+timeout-seconds+)
-      (with-websocket-connection ((ws-client *config*))
-        (wsd:on :message (ws-client *config*)
-                #'(lambda (message)
-                    (ws-on-message
-                      message
-                      (extension-ids *config*)
-                      *config*)))
+          (trivial-timeout:with-timeout (+timeout-seconds+)
+            (with-websocket-connection ((ws-client *config*))
+              (wsd:on :message (ws-client *config*)
+                      #'(lambda (message)
+                          (ws-on-message
+                            message
+                            (extension-ids *config*)
+                            *config*)))
 
-        (websocket-send
-          (ws-client *config*)
-          (target-get-targets-msg
-            (next-call-id *devtools-root-call-id*)))
+              (websocket-send
+                (ws-client *config*)
+                (target-get-targets-msg
+                  (next-call-id *devtools-root-call-id*)))
 
-        (wait-group:wait *wg*)))))
+              (wait-group:wait *wg*)))))
+
+    ;; Control-c
+    (interrupt:user-abort ()
+      (opts:exit sysexits:+ok+))))
 
 (defun ws-on-message (message extension-ids config)
   "Called when a WebSocket message is received."
