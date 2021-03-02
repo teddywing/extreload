@@ -17,7 +17,7 @@
 
 
 (asdf:defsystem extreload
-  :version "0.0.1"
+  :version "0.0.2"
   :depends-on (:jsown
                :sysexits
                :trivial-timeout

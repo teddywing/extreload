@@ -1,0 +1,12 @@
+CHANGELOG
+=========
+
+v0.0.2 (2021-03-02):
+	Fixes:
+
+	* Exit when interrupted with <Control-c>.
+
+v0.0.1 (2021-02-27):
+	First public release.
+
+ vim:tw=80:comments=:fo+=n:formatlistpat=^\\s*\\*\\s*
