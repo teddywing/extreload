@@ -31,6 +31,8 @@ On Mac OS X, the program can be installed with Homebrew:
 
 	$ brew install teddywing/formulae/extreload
 
+Pre-built binaries for Mac OS X and Linux can be found on the [releases page].
+
 
 ## Build
 I’ve only tested the build with SBCL.
@@ -45,3 +47,4 @@ COPYING file).
 
 
 [DevTools Protocol]: https://chromedevtools.github.io/devtools-protocol/
+[releases page]: https://github.com/teddywing/extreload/releases
