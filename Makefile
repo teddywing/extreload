@@ -68,3 +68,15 @@ pkg: extreload_$(VERSION)_darwin-x86_64.tar.bz2
 
 extreload_$(VERSION)_darwin-x86_64.tar.bz2: dist
 	tar cjv -s /dist/extreload_$(VERSION)_darwin-x86_64/ -f $@ dist
+
+
+bundle:
+	mkdir -p lib/extreload
+	cp -a extreload.asd src lib/extreload/
+
+	$(LISP) --load bundle.lisp
+
+bundle/bundled-local-projects/0000/extreload/extreload: bundle
+	$(LISP) --load bundle/bundle.lisp \
+		--eval '(asdf:make :extreload)' \
+		--eval '(quit)'

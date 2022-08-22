@@ -1,2 +1,6 @@
 /dist/
 *.fasl
+
+/bundle/
+/lib/extreload/
+system-index.txt
