@@ -16,6 +16,14 @@
 # along with Extreload. If not, see <https://www.gnu.org/licenses/>.
 
 
+prefix ?= /usr/local
+exec_prefix ?= $(prefix)
+bindir ?= $(exec_prefix)/bin
+datarootdir ?= $(prefix)/share
+mandir ?= $(datarootdir)/man
+man1dir ?= $(mandir)/man1
+
+
 LISP ?= sbcl
 
 VERSION := $(shell fgrep ':version' extreload.asd | awk -F '"' '{ print $$2 }')
@@ -80,3 +88,11 @@ bundle/bundled-local-projects/0000/extreload/extreload: bundle
 	$(LISP) --load bundle/bundle.lisp \
 		--eval '(asdf:make :extreload)' \
 		--eval '(quit)'
+
+
+.PHONY: install
+install: bundle/bundled-local-projects/0000/extreload/extreload $(MAN_PAGE)
+	install -m 755 bundle/bundled-local-projects/0000/extreload/extreload $(DESTDIR)$(bindir)
+
+	install -d $(DESTDIR)$(man1dir)
+	install -m 644 $(MAN_PAGE) $(DESTDIR)$(man1dir)
