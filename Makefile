@@ -71,13 +71,6 @@ $(DIST_MAN_PAGE): $(DIST)/share/man/man1 $(MAN_PAGE)
 	cp $(MAN_PAGE) $<
 
 
-.PHONY: pkg
-pkg: extreload_$(VERSION)_darwin-x86_64.tar.bz2
-
-extreload_$(VERSION)_darwin-x86_64.tar.bz2: dist
-	tar cjv -s /dist/extreload_$(VERSION)_darwin-x86_64/ -f $@ dist
-
-
 bundle: extreload.asd src/*.lisp
 	mkdir -p lib/extreload
 	cp -a extreload.asd src lib/extreload/
@@ -88,6 +81,21 @@ bundle/bundled-local-projects/0000/extreload/extreload: bundle
 	$(LISP) --load bundle/bundle.lisp \
 		--eval '(asdf:make :extreload)' \
 		--eval '(quit)'
+
+
+.PHONY: pkg
+pkg: extreload_$(VERSION).tar.bz2
+
+extreload_$(VERSION).tar.bz2: bundle extreload.asd src/*.lisp
+	git archive \
+		--prefix=extreload_$(VERSION)/ \
+		--output=extreload_$(VERSION).tar \
+		HEAD
+	tar -r \
+		-s ,bundle,extreload_$(VERSION)/bundle, \
+		-f extreload_$(VERSION).tar \
+		bundle
+	bzip2 extreload_$(VERSION).tar
 
 
 .PHONY: install
