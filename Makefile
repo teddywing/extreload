@@ -78,7 +78,7 @@ extreload_$(VERSION)_darwin-x86_64.tar.bz2: dist
 	tar cjv -s /dist/extreload_$(VERSION)_darwin-x86_64/ -f $@ dist
 
 
-bundle:
+bundle: extreload.asd src/*.lisp
 	mkdir -p lib/extreload
 	cp -a extreload.asd src lib/extreload/
 
