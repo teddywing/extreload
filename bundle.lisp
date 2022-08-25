@@ -2,8 +2,7 @@
 
 (let ((dependencies (append
                       (asdf:system-depends-on (asdf:find-system :extreload))))
-      (local-dependencies '("sysexits"
-                            "wait-group")))
+      (local-dependencies '("wait-group")))
   (ql:bundle-systems
     (set-difference
       (sort dependencies #'string-lessp)
