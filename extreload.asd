@@ -1,4 +1,4 @@
-;;; Copyright (c) 2021  Teddy Wing
+;;; Copyright (c) 2021–2022  Teddy Wing
 ;;;
 ;;; This file is part of Extreload.
 ;;;
@@ -15,6 +15,11 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with Extreload. If not, see <https://www.gnu.org/licenses/>.
 
+
+;; SSL is not required for Extreload. Including it can cause a dynamic library
+;; load path error if the runtime paths are different from those on the build
+;; machine.
+(push :websocket-driver-no-ssl *features*)
 
 (asdf:defsystem extreload
   :version "0.0.2"

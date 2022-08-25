@@ -1,4 +1,4 @@
-# Copyright (c) 2021  Teddy Wing
+# Copyright (c) 2021–2022  Teddy Wing
 #
 # This file is part of Extreload.
 #
@@ -14,6 +14,14 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with Extreload. If not, see <https://www.gnu.org/licenses/>.
+
+
+prefix ?= /usr/local
+exec_prefix ?= $(prefix)
+bindir ?= $(exec_prefix)/bin
+datarootdir ?= $(prefix)/share
+mandir ?= $(datarootdir)/man
+man1dir ?= $(mandir)/man1
 
 
 LISP ?= sbcl
@@ -63,8 +71,36 @@ $(DIST_MAN_PAGE): $(DIST)/share/man/man1 $(MAN_PAGE)
 	cp $(MAN_PAGE) $<
 
 
-.PHONY: pkg
-pkg: extreload_$(VERSION)_darwin-x86_64.tar.bz2
+bundle: extreload.asd src/*.lisp
+	mkdir -p lib/extreload
+	cp -a extreload.asd src lib/extreload/
 
-extreload_$(VERSION)_darwin-x86_64.tar.bz2: dist
-	tar cjv -s /dist/extreload_$(VERSION)_darwin-x86_64/ -f $@ dist
+	$(LISP) --load bundle.lisp
+
+bundle/bundled-local-projects/0000/extreload/extreload: bundle
+	$(LISP) --load bundle/bundle.lisp \
+		--eval '(asdf:make :extreload)' \
+		--eval '(quit)'
+
+
+.PHONY: pkg
+pkg: extreload_$(VERSION).tar.bz2
+
+extreload_$(VERSION).tar.bz2: bundle extreload.asd src/*.lisp
+	git archive \
+		--prefix=extreload_$(VERSION)/ \
+		--output=extreload_$(VERSION).tar \
+		HEAD
+	tar -r \
+		-s ,bundle,extreload_$(VERSION)/bundle, \
+		-f extreload_$(VERSION).tar \
+		bundle
+	bzip2 extreload_$(VERSION).tar
+
+
+.PHONY: install
+install: bundle/bundled-local-projects/0000/extreload/extreload $(MAN_PAGE)
+	install -m 755 bundle/bundled-local-projects/0000/extreload/extreload $(DESTDIR)$(bindir)
+
+	install -d $(DESTDIR)$(man1dir)
+	install -m 644 $(MAN_PAGE) $(DESTDIR)$(man1dir)
