@@ -60,6 +60,8 @@ with code `exit-code`."
 `condition` and exits with EX_USAGE."
   (exit-with-error condition sysexits:+usage+))
 
+(defconstant *version* (asdf:component-version (asdf:find-system :extreload)))
+
 (defun parse-options ()
   "Parse command line options."
   (multiple-value-bind (options free-args)
@@ -79,7 +81,7 @@ with code `exit-code`."
       (opts:exit sysexits:+usage+))
 
     (when-option (options :version)
-      (format t "~a~%" (asdf:component-version (asdf:find-system :extreload)))
+      (format t "~a~%" *version*)
 
       (opts:exit sysexits:+ok+))
 
