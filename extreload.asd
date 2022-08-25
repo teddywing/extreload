@@ -16,6 +16,11 @@
 ;;; along with Extreload. If not, see <https://www.gnu.org/licenses/>.
 
 
+;; SSL is not required for Extreload. Including it can cause a dynamic library
+;; load path error if the runtime paths are different from those on the build
+;; machine.
+(push :websocket-driver-no-ssl *features*)
+
 (asdf:defsystem extreload
   :version "0.0.2"
   :depends-on (:jsown
