@@ -151,8 +151,11 @@ the target to reload the current tab."
 (defun extension-targets (targets)
   "Filter `targets`, returning a list of targets corresponding to extensions."
   (labels ((extensionp (target)
-             (string= (json-obj-get target "type")
-                      "background_page")))
+             (or
+               (string= (json-obj-get target "type")
+                        "background_page")
+               (string= (json-obj-get target "type")
+                        "service_worker"))))
 
     (filter #'extensionp targets)))
 
