@@ -69,7 +69,7 @@
 
         (attach-extensions targets extension-ids)))
 
-    (if (target-attached-to-target-msg-p response)
+    (when (target-attached-to-target-msg-p response)
         (reload-extension (json-obj-get
                             (json-obj-get response "params")
                             "sessionId")))
@@ -146,7 +146,7 @@ the target to reload the current tab."
     (runtime-evaluate-msg
       (next-call-id *devtools-secondary-call-id*)
       session-id
-      "chrome.tabs.reload()")))
+      "chrome.tabs.reload(() => {})")))
 
 (defun extension-targets (targets)
   "Filter `targets`, returning a list of targets corresponding to extensions."
@@ -154,6 +154,8 @@ the target to reload the current tab."
              (or
                (string= (json-obj-get target "type")
                         "background_page")
+               ;; TODO: This might require us to re-attach to the service worker after chrome.runtime.reload
+               ;; Compare MV2 and MV3 debug output
                (string= (json-obj-get target "type")
                         "service_worker"))))
 
