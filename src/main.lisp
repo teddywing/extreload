@@ -23,6 +23,8 @@
   "DevTools Protocol call ID.")
 (defvar *devtools-secondary-call-id* (make-instance 'call-id)
   "DevTools Protocol call ID used for messages to individual target sessions.")
+(defvar *extensions* '()
+  "TODO")
 
 (defconstant +timeout-seconds+ 5
   "Global timeout. The program will exit at the end of this delay.")
@@ -70,9 +72,27 @@
         (attach-extensions targets extension-ids)))
 
     (when (target-attached-to-target-msg-p response)
-        (reload-extension (json-obj-get
-                            (json-obj-get response "params")
-                            "sessionId")))
+      (track-service-worker-target response)
+
+      (reload-extension (json-obj-get
+                          (json-obj-get response "params")
+                          "sessionId")))
+
+    ; (format t "EXTENSIONS: ~a~%" *extensions*)
+
+    (when (and (reload-current-tab config)
+               (inspector-target-crashed-msg-p response))
+      ;; Attach to target again
+      ;; then somehow reload the tab
+      ;; And need to only do this for MV3 extensions
+
+      ;; Loop through *extensions*, if sessionId matches, then send attach message to extension
+      ;; Need to get new targets, and attach to all MV3 extensions again
+      (websocket-send
+        (ws-client *config*)
+        (target-get-targets-msg
+          (next-call-id *devtools-root-call-id*)))
+      )
 
     (when (and (reload-current-tab config)
                (runtime-evaluate-msg-p response))
@@ -160,6 +180,26 @@ the target to reload the current tab."
                         "service_worker"))))
 
     (filter #'extensionp targets)))
+
+(defun track-service-worker-target (target)
+  "TODO"
+  (let* ((params (json-obj-get target "params"))
+         (target-info (json-obj-get params "targetInfo")))
+
+    (when (string= (json-obj-get target-info "type")
+                   "service_worker")
+      (push
+        (make-instance 'extension
+                       :id (subseq
+                             (json-obj-get target-info "url")
+
+                             ;; Remove "chrome-extension://".
+                             19
+
+                             ;; Extension IDs are 32 characters long.
+                             (+ 19 32))
+                       :session-id (json-obj-get params "sessionId"))
+        *extensions*))))
 
 (defun websocket-send (client data)
   "Send `data` to WebSocket `client` and increment `*wg*`."

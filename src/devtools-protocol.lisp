@@ -56,6 +56,12 @@
   "Returns true if `message` describes a runtime exception"
   (jsown:keyp (json-obj-get message "result") "exceptionDetails"))
 
+(defun inspector-target-crashed-msg-p (message)
+  "Returns true if `message` describes a target crashed"
+  (equal
+    (json-obj-get message "method")
+    "Inspector.targetCrashed"))
+
 (defun parse-get-targets-response (response)
   "Parses a list of target info objects from the response to `Target.getTargets`."
   (let* ((result (json-obj-get response "result"))

@@ -37,6 +37,7 @@
                              (:file "config")
                              (:file "option")
                              (:file "call-id")
+                             (:file "extension")
                              (:file "devtools-protocol")
                              (:file "main"))))
 
