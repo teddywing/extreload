@@ -72,6 +72,16 @@
         (attach-extensions targets extension-ids)))
 
     (when (target-attached-to-target-msg-p response)
+      (when (and (reload-current-tab config)
+                 (target-attached-to-target-msg-manifest-v3-extension-p response))
+        ;; response is an extension in *extensions*
+
+        (reload-tab (json-obj-get
+                      (json-obj-get response "result")
+                      "sessionId"))
+
+        (return-from ws-on-message))
+
       (track-service-worker-target response)
 
       (reload-extension (json-obj-get
@@ -198,8 +208,29 @@ the target to reload the current tab."
 
                              ;; Extension IDs are 32 characters long.
                              (+ 19 32))
+                       :url (json-obj-get target-info "url")
                        :session-id (json-obj-get params "sessionId"))
         *extensions*))))
+
+(defun target-attached-to-target-msg-manifest-v3-extension-p (msg)
+  "Return true if the Target.attachedToTarget message `msg` corresonds to a
+tracked Manifest V3 extension."
+  (filter
+    #'(lambda (extension)
+        (string= (json-obj-get
+                   (json-obj-get
+                     (json-obj-get msg "params")
+                     "targetInfo")
+                   "url")
+                 (url extension)))
+    *extensions*))
+
+(defun manifest-v3-extension-p (extension)
+  "Return true if `extension` is in our list of tracked Manifest V3 extensions."
+  (filter
+    #'(lambda (ext)
+        ())
+    *extensions*))
 
 (defun websocket-send (client data)
   "Send `data` to WebSocket `client` and increment `*wg*`."
