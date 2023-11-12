@@ -146,7 +146,7 @@ the target to reload the current tab."
     (runtime-evaluate-msg
       (next-call-id *devtools-secondary-call-id*)
       session-id
-      "chrome.tabs.reload(() => {})")))
+      "chrome.tabs.reload()")))
 
 (defun extension-targets (targets)
   "Filter `targets`, returning a list of targets corresponding to extensions."
