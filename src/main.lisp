@@ -76,12 +76,17 @@
       (when (and (reload-current-tab config)
                  (target-attached-to-target-msg-manifest-v3-extension-p response))
         ;; response is an extension in *extensions*
+        (format t "RELOADING TAB: ~a~%"
+                (json-obj-get
+                  (json-obj-get response "params")
+                  "sessionId"))
 
         (reload-tab (json-obj-get
                       (json-obj-get response "params")
                       "sessionId"))
 
-        (return-from ws-on-message))
+        ; (return-from ws-on-message)
+        )
 
       (track-service-worker-target response)
 
@@ -89,7 +94,7 @@
                           (json-obj-get response "params")
                           "sessionId")))
 
-    ; (format t "EXTENSIONS: ~a~%" *extensions*)
+    (format t "EXTENSIONS: ~a~%" *extensions*)
 
     (when (and (reload-current-tab config)
                (inspector-target-crashed-msg-p response))
@@ -173,18 +178,24 @@ the target extension to reload itself."
   "Send a message to an extension page corresponding to `session-id`, telling
 the target to reload the current tab."
 
+  (format t "DO THE RELOAD~%")
+
   ;; Two response messages always come back from the `chrome.tabs.reload()`
   ;; messages, so we need to add a second increment to the wait group.
   (wait-group:add *wg*)
 
-  (sleep 5)
+  (sleep 1)
+  (format t "DO THE RELOAD~%")
 
   (websocket-send
     (ws-client *config*)
     (runtime-evaluate-msg
       (next-call-id *devtools-secondary-call-id*)
       session-id
-      "chrome.tabs.reload()")))
+      "chrome.tabs.reload()"))
+
+  (format t "Did THE RELOAD~%")
+  )
 
 (defun extension-targets (targets)
   "Filter `targets`, returning a list of targets corresponding to extensions."
@@ -223,15 +234,18 @@ the target to reload the current tab."
 (defun target-attached-to-target-msg-manifest-v3-extension-p (msg)
   "Return true if the Target.attachedToTarget message `msg` corresonds to a
 tracked Manifest V3 extension."
-  (filter
-    #'(lambda (extension)
-        (string= (json-obj-get
-                   (json-obj-get
-                     (json-obj-get msg "params")
-                     "targetInfo")
-                   "url")
-                 (url extension)))
-    *extensions*))
+  (>=
+    (length
+      (filter
+        #'(lambda (extension)
+            (string= (json-obj-get
+                       (json-obj-get
+                         (json-obj-get msg "params")
+                         "targetInfo")
+                       "url")
+                     (url extension)))
+        *extensions*))
+    1))
 
 (defun manifest-v3-extension-p (extension)
   "Return true if `extension` is in our list of tracked Manifest V3 extensions."
