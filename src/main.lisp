@@ -71,13 +71,14 @@
 
         (attach-extensions targets extension-ids)))
 
+    ;; TODO: Force to attach a second time
     (when (target-attached-to-target-msg-p response)
       (when (and (reload-current-tab config)
                  (target-attached-to-target-msg-manifest-v3-extension-p response))
         ;; response is an extension in *extensions*
 
         (reload-tab (json-obj-get
-                      (json-obj-get response "result")
+                      (json-obj-get response "params")
                       "sessionId"))
 
         (return-from ws-on-message))
@@ -106,9 +107,14 @@
 
     (when (and (reload-current-tab config)
                (runtime-evaluate-msg-p response))
-      (reload-tab (json-obj-get
-                    (json-obj-get response "result")
-                    "sessionId")))
+      (websocket-send
+        (ws-client *config*)
+        (target-get-targets-msg
+          (next-call-id *devtools-root-call-id*)))
+      ; (reload-tab (json-obj-get
+      ;               (json-obj-get response "result")
+      ;               "sessionId"))
+      )
 
     ;; Failed to reload tab.
     (when (runtime-evaluate-exception-p response)
