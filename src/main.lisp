@@ -26,7 +26,7 @@
 (defvar *extensions* '()
   "TODO")
 
-(defconstant +timeout-seconds+ 5
+(defconstant +timeout-seconds+ 10
   "Global timeout. The program will exit at the end of this delay.")
 
 (defun main ()
@@ -170,6 +170,8 @@ the target to reload the current tab."
   ;; Two response messages always come back from the `chrome.tabs.reload()`
   ;; messages, so we need to add a second increment to the wait group.
   (wait-group:add *wg*)
+
+  (sleep 5)
 
   (websocket-send
     (ws-client *config*)
