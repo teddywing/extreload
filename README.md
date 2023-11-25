@@ -7,6 +7,14 @@ development.
 Communicates with Chrome over the [DevTools Protocol].
 
 
+## Manifest V3
+I tried to add support for Manifest V3 extensions in the branch
+[manifest-v3-support], but couldn’t get tab reloading to work properly.
+Ultimately, I gave up and decided to use the [chromedp] API rather than lower
+level JSON over the WebSocket. Manifest V3 support is available in a rewrite of
+this program, [Swextreload].
+
+
 ## Usage
 Chrome must be started with the `--remote-debugging-port` flag to enable the
 DevTools Protocol, and the `--silent-debugger-extension-api` flag to allow debug
@@ -46,5 +54,8 @@ Copyright © 2021 Teddy Wing. Licensed under the GNU GPLv3+ (see the included
 COPYING file).
 
 
+[manifest-v3-support]: https://github.com/teddywing/extreload/tree/manifest-v3-support
+[chromedp]: https://godocs.io/github.com/chromedp/chromedp
+[Swextreload]: https://github.com/teddywing/swextreload
 [DevTools Protocol]: https://chromedevtools.github.io/devtools-protocol/
 [releases page]: https://github.com/teddywing/extreload/releases
